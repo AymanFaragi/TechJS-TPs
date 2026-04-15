@@ -1,6 +1,8 @@
+#!/usr/bin/env node
 const inquirer = require("inquirer");
 
 const URL="https://pokeapi.co/api/v2/";
+
 
 async function fetchData(url){
     try {
@@ -37,7 +39,7 @@ async function pokemonMoves(pokemon){
 
 function getHP(stats){
     const hp=stats.find(s=>s.stat.name=="hp");
-    return hp ? hp.base_stat : 300;
+    return hp ? hp.base_stat*10 : 300;
 }
 
 async function getPokemon(pokemon){
@@ -73,7 +75,7 @@ async function chooseMove(pokemon){
             name: "move",
             message: "Select a move",
             choices: pokemon.moves.map((m,i)=>({
-                name: `${m.name} (PP: ${m.pp})`,
+                name: `${m.name} (PP ${m.pp})`,
                 value: i
             }))
         }
@@ -89,14 +91,15 @@ async function choosePokemon(){
         }
     ]);
     const pokemon = await getPokemon(choice.name.toLowerCase());
-    if(!pokemon){
+    if(!pokemon) {
         console.log("pokemon doesnt exist");
         return choosePokemon();
     }
+    console.clear()
     return pokemon;
 }
 async function enemyPokemon(){
-    const random = Math.floor(Math.random()*151)+1;
+    const random = Math.floor(Math.random()*1025)+1;
     return await getPokemon(random);
 }
 async function randomMove(pokemon){
@@ -115,6 +118,7 @@ async function game(){
         const enemymove= await randomMove(enemypoke);
         console.log(`your move: ${playermove.name}`)
         console.log(`enemymove: ${enemymove.name}`);
+        console.clear()
 
 
         attack(playerpoke, enemypoke, playermove);
